@@ -1,27 +1,12 @@
 class Solution {
     public int minPartitions(String n) {
         
-        char[] arr = n.toCharArray();
+        char maxCh = '0';
 
-        int count = 0;
-
-        while(true) {
-            boolean changed = false;
-
-            for(int i = 0; i < arr.length; i++) {
-                if(arr[i] != '0') {
-                    arr[i]--; // substarct -1
-                    changed = true;
-                }
-            }
-
-            if(!changed) {
-                break;
-            }
-
-            count++;
+        for(char ch : n.toCharArray()) {
+            maxCh = (char)Math.max(ch, maxCh);
         }
 
-        return count;
+        return maxCh - '0';
     }
 }
