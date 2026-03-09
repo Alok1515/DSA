@@ -1,46 +1,34 @@
 class Solution {
-
-    private final int M = (int)1e9 + 7;
-    int[][][] dp = new int[201][201][2];
-
-    private int solve(int onesLeft, int zerosLeft, boolean lastWasOne, int limit) {
-        // Base case 
-        if(onesLeft == 0 && zerosLeft == 0) {
-            return 1; // got one array
-        }
-
-        int last = lastWasOne ? 1 : 0;
-
-        if(dp[onesLeft][zerosLeft][last] != -1) {
-            return dp[onesLeft][zerosLeft][last];
-        }
-
-        long result = 0;
-
-        if(lastWasOne == true) { // explore 1's
-            for(int len = 1; len <= Math.min(zerosLeft, limit); len++) {
-                result = (result + solve(onesLeft, zerosLeft - len, false, limit)) % M;
-            }
-        } else { // explore 0's
-            for(int len = 1; len <= Math.min(onesLeft, limit); len++) {
-                result = (result + solve(onesLeft - len, zerosLeft, true, limit)) % M;
-            }
-        }
-
-        return dp[onesLeft][zerosLeft][last] = (int)result;
-    }
     public int numberOfStableArrays(int zero, int one, int limit) {
+        int M = 1_000_000_007;
+        int[][][] t = new int[one + 1][zero + 1][2];
 
-        for(int i = 0; i <= 200; i++) {
-            for(int j = 0; j <= 200; j++) {
-                dp[i][j][0] = -1;
-                dp[i][j][1] = -1;
+        // Base case: solve(0,0,lastWasOne) = 1
+        t[0][0][0] = 1;
+        t[0][0][1] = 1;
+
+        for (int onesLeft = 0; onesLeft <= one; onesLeft++) {
+            for (int zerosLeft = 0; zerosLeft <= zero; zerosLeft++) {
+                if (onesLeft == 0 && zerosLeft == 0) continue;
+
+                // if(lastWasOne == true) { explore 0s }
+                int result = 0;
+                for (int len = 1; len <= Math.min(zerosLeft, limit); len++) {
+                    result = (result + t[onesLeft][zerosLeft - len][0]) % M;
+                }
+                t[onesLeft][zerosLeft][1] = result;
+
+                // else { explore 1s }
+                result = 0;
+                for (int len = 1; len <= Math.min(onesLeft, limit); len++) {
+                    result = (result + t[onesLeft - len][zerosLeft][1]) % M;
+                }
+                t[onesLeft][zerosLeft][0] = result;
             }
         }
 
-        int startWithZero = solve(one, zero, true, limit);
-        int startWithOne  = solve(one, zero, false, limit);
-
-        return (startWithZero + startWithOne) % M;
+        int startWithOne  = t[one][zero][0]; // solve(one, zero, false, limit)
+        int startWithZero = t[one][zero][1]; // solve(one, zero, true, limit)
+        return (startWithOne + startWithZero) % M;
     }
 }
