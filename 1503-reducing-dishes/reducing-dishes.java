@@ -1,28 +1,22 @@
 class Solution {
 
     public int maxSatisfaction(int[] satisfaction) {
+
         Arrays.sort(satisfaction);
         int n = satisfaction.length;
 
-        Integer[][] dp = new Integer[n][n+1];
+        int[][] dp = new int[n + 1][n + 2];
 
-        return solve(satisfaction, 0, 1, dp);
-    }
+        for (int i = n - 1; i >= 0; i--) {
+            for (int time = i + 1; time >= 1; time--) {
 
-    private int solve(int[] satisfaction, int i, int time, Integer[][] dp) {
-        // Base Case 
-        if(i == satisfaction.length) {
-            return 0;
+                int take = satisfaction[i] * time + dp[i + 1][time + 1];
+                int notTake = dp[i + 1][time];
+
+                dp[i][time] = Math.max(take, notTake);
+            }
         }
 
-        // check before calling
-        if(dp[i][time] != null) {
-            return dp[i][time];
-        }
-
-        int take = satisfaction[i] * time + solve(satisfaction, i + 1, time + 1, dp);
-        int notTake = solve(satisfaction, i + 1, time, dp);
-
-        return dp[i][time] =  Math.max(take, notTake);
+        return dp[0][1];
     }
 }
