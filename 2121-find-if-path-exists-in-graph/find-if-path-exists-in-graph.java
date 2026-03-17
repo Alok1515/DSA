@@ -1,23 +1,4 @@
 class Solution {
-
-    private boolean check(List<List<Integer>> graph, int node, int dest, boolean[] visited) {
-
-        if(node == dest) return true;
-
-        // if alreasy visited return false 
-        if(visited[node]) return false;
-
-        visited[node] = true; // mark the node as true
-
-        for(int neighbor : graph.get(node)) {
-            if(check(graph, neighbor, dest, visited)) {
-                return true;
-            }
-        }
-
-        return false;
-
-    }
     public boolean validPath(int n, int[][] edges, int source, int destination) {
         if(source == destination) {
             return true;
@@ -41,6 +22,23 @@ class Solution {
 
         boolean[] visited = new boolean[n];
 
-        return check(graph, source, destination, visited);
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(source);
+        visited[source] = true; // mark it as visited
+
+        while(!q.isEmpty()) {
+            int node = q.poll();
+
+            if(node == destination) return true;
+
+            for(int neighbor : graph.get(node)) {
+                if(!visited[neighbor]) {
+                    q.offer(neighbor);
+                    visited[neighbor] = true;
+                }
+            }
+        }
+
+        return false;
     }
 }
