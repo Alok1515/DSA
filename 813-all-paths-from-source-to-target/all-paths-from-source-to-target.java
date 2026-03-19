@@ -1,28 +1,33 @@
 class Solution {
-    int target;
-    private void dfs(int[][] graph, int start, List<Integer> temp,  List<List<Integer>> result) {
-
-        if(start == target) {
-            result.add(new ArrayList<>(temp));
-            return;
-        }
-
-        for(int x : graph[start]) {
-            temp.add(x);
-            dfs(graph, x, temp, result);
-            temp.remove(temp.size() - 1); // backtrack to check another path
-        }
-    }
     public List<List<Integer>> allPathsSourceTarget(int[][] graph) {
+        
+        int source = 0;
+        int target = graph.length - 1;
+
         List<List<Integer>> result = new ArrayList<>();
         List<Integer> temp = new ArrayList<>();
 
-        target = graph.length - 1;
+        Queue<List<Integer>> q = new LinkedList<>();
+        temp.add(0);
+        q.offer(new ArrayList<>(temp));
 
-        temp.add(0); // add the start node in temp
-        dfs(graph, 0, temp, result);
+        while(!q.isEmpty()) {
+
+            List<Integer> currPath = q.poll();
+
+            int lastNode = currPath.get(currPath.size() - 1); // get the last node
+
+            if(lastNode == target) {
+                result.add(currPath);
+            } else {
+                for(int v : graph[lastNode]) {
+                    List<Integer> path = new ArrayList<>(currPath); // copy the currPath
+                    path.add(v);
+                    q.offer(new ArrayList<>(path));
+                }
+            }
+        }
 
         return result;
-
     }
 }
