@@ -6,7 +6,7 @@ class Solution {
         int startCol = y;
         int endCol = y + k - 1;
 
-        while (startRow < endRow) { //You can use while loop as well which is cleaner that for loop above in C++ code
+        while (startRow < endRow) { 
             for (int j = startCol; j <= endCol; j++) {
                 int temp = grid[startRow][j];
                 grid[startRow][j] = grid[endRow][j];
