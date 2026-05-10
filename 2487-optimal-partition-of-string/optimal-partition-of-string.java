@@ -1,18 +1,21 @@
 class Solution {
     public int partitionString(String s) {
-        Set<Character> st = new HashSet<>();
-        int count = 1;
+        int count = 0;
+        int startIdx = 0;
 
-        for(char ch : s.toCharArray()) {
-            if(!st.contains(ch)) {
-                st.add(ch);
-            } else {
+        int[] lastSeen = new int[26];
+        Arrays.fill(lastSeen, -1);
+
+        for(int i = 0; i < s.length(); i++) {
+            int ch = s.charAt(i);
+
+            if(lastSeen[ch - 'a'] >= startIdx) {
                 count++;
-                st.clear();
-                st.add(ch);
+                startIdx = i;
             }
+            lastSeen[ch - 'a'] = i;
         }
 
-        return count;
+        return count + 1;
     }
 }
