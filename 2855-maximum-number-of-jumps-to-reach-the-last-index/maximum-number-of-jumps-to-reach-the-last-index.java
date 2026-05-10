@@ -1,36 +1,25 @@
 class Solution {
-
     public int maximumJumps(int[] nums, int target) {
-        Integer[] dp = new Integer[nums.length + 1];
+        int n = nums.length;
 
-        int ans = solve(0, nums, target, dp);
+        int[] t = new int[n+1];
 
-        return ans < 0 ? -1 : ans;
-    }
+        Arrays.fill(t, Integer.MIN_VALUE);
 
-    private int solve(int i, int[] nums, int target, Integer[] dp) {
+        t[n-1] = 0;
 
-        // reached last index
-        if(i == nums.length - 1) {
-            return dp[i] = 0;
-        }
+        for(int i = n-2; i >= 0; i--) {
+            for(int j = i+1; j < n; j++) {
+                if(Math.abs(nums[i] - nums[j]) <= target &&
+                   t[j] != Integer.MIN_VALUE) {
 
-        int result = -1;
+                    int temp = 1 + t[j];
 
-        if(dp[i] != null) return dp[i];
-
-        for(int j = i + 1; j < nums.length; j++) {
-
-            if(Math.abs(nums[j] - nums[i]) <= target) {
-
-                int temp = solve(j, nums, target, dp);
-
-                if(temp != -1) {
-                    result = Math.max(result, 1 + temp);
+                    t[i] = Math.max(t[i], temp);
                 }
             }
         }
 
-        return dp[i] = result;
+        return t[0] < 0 ? -1 : t[0];
     }
 }
