@@ -60,10 +60,7 @@ class Solution {
             int currNode = curr.node;
             int currDist = curr.dist;
 
-            // Skip outdated entries
-            if(currDist > dist[currNode]) {
-                continue;
-            }
+            
 
             for(Pair ngbr : adj.get(currNode)) {
                 int nextNode = ngbr.node;
