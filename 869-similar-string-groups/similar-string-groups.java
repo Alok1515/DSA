@@ -1,13 +1,20 @@
 class Solution {
 
-    private void dfs(int u, List<List<Integer>> adj, boolean[] visited) {
+    private void bfs(int u, List<List<Integer>> adj, boolean[] visited) {
 
-        visited[u] = true;
+        Queue<Integer> q = new LinkedList<>();
+        q.offer(u);
 
-        for (int v : adj.get(u)) {
+        while(!q.isEmpty()) {
 
-            if (!visited[v]) {
-                dfs(v, adj, visited);
+            int curr = q.poll();
+
+            for(int neighbor : adj.get(curr)) {
+
+                if(!visited[neighbor]) {
+                    q.offer(neighbor);
+                    visited[neighbor] = true;
+                }
             }
         }
     }
@@ -57,7 +64,7 @@ class Solution {
 
             if (!visited[i]) {
 
-                dfs(i, adj, visited);
+                bfs(i, adj, visited);
 
                 count++;
             }
