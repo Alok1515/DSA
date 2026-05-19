@@ -1,28 +1,26 @@
 class Solution {
 
-    int n;
-    Integer[] dp;
-
-    private int solve(int i, int[] nums, int n) {
-
-        // base case
-        if(i == n-1) return nums[i];
-
-        if(i >= n) return 0;
-
-        if(dp[i] != null) return dp[i];
-
-        int pick = nums[i] + solve(i + 2, nums, n);
-        int notPick = 0 + solve(i + 1, nums, n);
-
-        return dp[i] = Math.max(pick, notPick);
-    }
     public int rob(int[] nums) {
         
-        n = nums.length;
+        int n = nums.length;
 
-        dp = new Integer[n];
+        if(n == 1) return nums[0];
 
-        return solve(0, nums, n);
+        int[] dp = new int[n+1];
+
+        // Base case
+        dp[n-1] = nums[n-1];
+        dp[n] = 0;
+
+
+        for(int i = n-2; i >= 0; i--) {
+
+            int pick = nums[i] + dp[i+2];
+            int notPick = dp[i+1];
+
+            dp[i] = Math.max(pick, notPick);
+        }
+
+        return dp[0];
     }
 }
