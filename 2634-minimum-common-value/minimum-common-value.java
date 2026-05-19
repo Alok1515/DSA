@@ -8,15 +8,13 @@ class Solution {
             set.add(num);
         }
 
-        int common = 0;
 
         for(int num : nums2) {
             if(set.contains(num)) {
-                common = num;
-                break;
+                return num;
             }
         }
 
-        return (common > 0) ? common : -1;
+        return -1;
     }
 }
