@@ -1,28 +1,26 @@
 class Solution {
 
-    int n;
-    Integer[][] dp;
 
-    private int solve(int i, int j, List<List<Integer>> triangle) {
-
-        // base case
-        if(i == n-1) {
-            return triangle.get(i).get(j);
-        }
-
-        if(i >= n || j >= n) return Integer.MAX_VALUE;
-
-        if(dp[i][j] != null) return dp[i][j];
-
-        int down = solve(i + 1, j, triangle);
-        int diagonal = solve(i + 1, j + 1, triangle);
-
-        return dp[i][j] = triangle.get(i).get(j) + Math.min(down, diagonal);
-    }
     public int minimumTotal(List<List<Integer>> triangle) {
 
-        n = triangle.size();
-        dp = new Integer[n][n];
-        return solve(0, 0, triangle);
+        int n = triangle.size();
+        int[][] dp = new int[n+1][n+1];
+
+        // fill the last row
+        for(int j = 0; j < n; j++) {
+            dp[n-1][j] = triangle.get(n-1).get(j);
+        }
+        
+        for(int i = n-2; i >= 0; i--) {
+            for(int j = 0; j <= i; j++) {
+
+                int down = dp[i+1][j];
+                int diag = dp[i+1][j+1];
+
+                dp[i][j] = triangle.get(i).get(j) + Math.min(down, diag);
+            }
+        }
+
+        return dp[0][0];
     }
 }
