@@ -1,31 +1,64 @@
 class Solution {
-    private void dfs(int[][] stones, int index, boolean[] visited) {
 
-        visited[index] = true;
+    class DSU {
+        int[] parent;
+        int[] rank;
 
-        for(int i = 0; i < stones.length; i++) {
-            int row = stones[index][0];
-            int col = stones[index][1];
+        DSU(int n) {
+            parent = new int[n];
+            rank   = new int[n];
 
-            if((visited[i] == false) && (stones[i][0] == row || stones[i][1] == col)) {
-                dfs(stones, i, visited);
+            for(int i = 0; i < n; i++) {
+                parent[i] = i;
+            }
+        }
+
+        int find(int u) {
+            if(parent[u] != u) {
+                parent[u] = find(parent[u]);
+            }
+
+            return parent[u];
+        }
+
+        void union(int u, int v) {
+            int pu = find(u);
+            int pv = find(v);
+
+            if(pu == pv) return;
+
+            if(rank[pu] > rank[pv]) {
+                parent[pv] = pu;
+            } else if(rank[pu] < rank[pv]) {
+                parent[pu] = pv;
+            } else {
+                parent[pu] = pv;
+                rank[pv]++;
             }
         }
     }
     public int removeStones(int[][] stones) {
+        
+        int groups = 0;
         int n = stones.length;
 
-        boolean[] visited = new boolean[n];
+        DSU dsu = new DSU(n);
 
-        int group = 0;
         for(int i = 0; i < n; i++) {
-            if(visited[i] == true) continue; // skip the inddex
+            for(int j = i + 1; j < n; j++) {
 
-            dfs(stones, i, visited); // traverse the unvisited index
-
-            group++;
+                if(stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]) {
+                    dsu.union(i, j);
+                }
+            }
         }
 
-        return (n - group);
+        for(int i = 0; i < n; i++) {
+            if(dsu.find(i) == i) {
+                groups++;
+            }
+        }
+
+        return n - groups;
     }
 }
