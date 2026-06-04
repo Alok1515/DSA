@@ -15,42 +15,30 @@
  */
 class Solution {
 
-    int count = 0;
+    int ans = 0;
 
+    private int[] dfs(TreeNode root) {
+
+        if(root == null) {
+            return new int[]{0, 0}; // sum, count
+        }
+
+        int[] left = dfs(root.left);
+        int[] right = dfs(root.right);
+
+        int sum = left[0] + right[0] + root.val;
+        int node = left[1] + right[1] + 1;
+
+        if(sum / node == root.val) {
+            ans++;
+        }
+
+        return new int[]{sum, node};
+    }
     public int averageOfSubtree(TreeNode root) {
         
         dfs(root);
-        
-        return count;
-    }
 
-    private void dfs(TreeNode root) {
-
-        if(root == null) return;
-
-        int sum = getSum(root);
-        int nodes = getCount(root);
-
-        if(sum / nodes == root.val) {
-            count++;
-        }
-
-        dfs(root.left);
-        dfs(root.right);
-    }
-
-    private int getSum(TreeNode root) {
-        if(root == null) {
-            return 0;
-        }
-
-        return root.val + getSum(root.left) + getSum(root.right);
-    }
-
-    private int getCount(TreeNode root) {
-
-        if(root == null) return 0;
-
-        return 1 + getCount(root.left) + getCount(root.right);
+        return ans;
     }
 }
