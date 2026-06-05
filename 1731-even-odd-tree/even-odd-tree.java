@@ -14,68 +14,50 @@
  * }
  */
 class Solution {
-
-    class Pair {
-        TreeNode node;
-        int level;
-
-        Pair(TreeNode node, int level) {
-            this.node = node;
-            this.level = level;
-        }
-    }
     public boolean isEvenOddTree(TreeNode root) {
         
-        if(root == null) return true;
+        Queue<TreeNode> q = new LinkedList<>();
+        q.offer(root);
 
-        if(root.val % 2 == 0) return false;
-
-        Queue<Pair> q = new LinkedList<>();
-        q.offer(new Pair(root, 0));
+        int level = 0;
 
         while(!q.isEmpty()) {
 
             int size = q.size();
 
-            List<Integer> list = new ArrayList<>();
-            int level = q.peek().level;
+            int prev;
+
+            if(level % 2 == 0) {
+                prev = Integer.MIN_VALUE;
+            } else {
+                prev = Integer.MAX_VALUE;
+            }
 
             for(int i = 0; i < size; i++) {
+                TreeNode node = q.poll();
 
-                Pair curr = q.poll();
-                TreeNode node = curr.node;
-                list.add(node.val);
+                if(level % 2 == 0) {
 
-                if(node.left != null) {
-                    q.offer(new Pair(node.left, level + 1));
+                    // odd values, strictly increasing
+                    if(node.val % 2 == 0 || node.val <= prev) {
+                        return false;
+                    }
+
+                } else {
+
+                    // even values, strictly decreasing
+                    if(node.val % 2 != 0 || node.val >= prev) {
+                        return false;
+                    }
                 }
-                if(node.right != null) {
-                    q.offer(new Pair(node.right, level + 1));
-                }
+
+                prev = node.val;
+
+                if(node.left != null) q.offer(node.left);
+                if(node.right != null) q.offer(node.right);
             }
 
-            if(level % 2 != 0) {
-
-                for(int num : list) {
-                    if(num % 2 != 0) return false; // must be even
-                }
-
-                for(int i = 0; i < list.size() - 1; i++) {
-                    if(list.get(i) <= list.get(i + 1))
-                        return false; // strictly decreasing
-                }
-            }
-            else {
-
-                for(int num : list) {
-                    if(num % 2 == 0) return false; // must be odd
-                }
-
-                for(int i = 0; i < list.size() - 1; i++) {
-                    if(list.get(i) >= list.get(i + 1))
-                        return false; // strictly increasing
-                }
-            }
+            level++;
         }
 
         return true;
