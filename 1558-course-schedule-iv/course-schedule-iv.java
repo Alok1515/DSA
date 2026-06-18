@@ -1,66 +1,62 @@
 class Solution {
-
-    int n;
-
-    private boolean bfs(int u, int v, List<Integer>[] adj) {
+    public List<Boolean> checkIfPrerequisite(int numCourses, int[][] prerequisites, int[][] queries) {
+        
+        List<Integer>[] graph = new ArrayList[numCourses];
+        int[] inDegree = new int[numCourses];
 
         Queue<Integer> q = new LinkedList<>();
-        boolean[] visited = new boolean[n];
 
-        q.offer(u);
+        for(int i = 0; i < numCourses; i++) {
+            graph[i] = new ArrayList<>();
+        }
 
-        visited[u] = true;
+        for(int[] preq : prerequisites) {
+            int u = preq[0];
+            int v = preq[1];
+
+            graph[u].add(v);
+            inDegree[v]++;
+        }
+
+        for(int i = 0; i < numCourses; i++) {
+            if(inDegree[i] == 0) {
+                q.offer(i);
+            }
+        }
+
+        Set<Integer>[] set = new HashSet[numCourses];
+
+        for(int i = 0; i < numCourses; i++) {
+            set[i] = new HashSet<>();
+        }
 
         while(!q.isEmpty()) {
 
-            int size = q.size();
+            int curr = q.poll();
 
-            while(size-- > 0) {
+            for(int next : graph[curr]) {
 
-                int curr = q.poll();
+                set[next].add(curr);
 
-                for(int nei : adj[curr]) {
+                set[next].addAll(set[curr]); // add all preq of the curr as well
 
-                    if(nei == v) return true;
+                inDegree[next]--;
 
-                    if(!visited[nei]) {
-                        visited[nei] = true;
-                        q.offer(nei);
-                    }
+                if(inDegree[next] == 0) {
+                    q.offer(next);
                 }
             }
         }
 
-        return false;
-    }
+        List<Boolean> ans = new ArrayList<>();
 
-    public List<Boolean> checkIfPrerequisite(int numCourses, int[][] prerequisites, int[][] queries) {
-        
-       n = numCourses;
+        for(int[] query : queries) {
+            int u = query[0];
+            int v = query[1];
 
-       List<Integer>[] adj = new ArrayList[numCourses];
+            ans.add(set[v].contains(u));
+        }
 
-       for(int i = 0; i < numCourses; i++) {
-           adj[i] = new ArrayList<>();
-       }
-
-       for(int[] pre : prerequisites) {
-           int u = pre[0];
-           int v = pre[1];
-
-           adj[u].add(v);
-       }
-
-       List<Boolean> ans = new ArrayList<>();
-
-
-       for(int[] query : queries) {
-           int u = query[0];
-           int v = query[1];
-
-           ans.add(bfs(u, v, adj));
-       }
-
-       return ans;
+        return ans;
     }
 }
