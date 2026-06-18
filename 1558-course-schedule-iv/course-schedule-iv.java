@@ -1,14 +1,33 @@
 class Solution {
 
-    private boolean dfs(int u, int v, List<Integer>[] adj, boolean[] visited) {
+    int n;
 
-        if(u == v) return true;
+    private boolean bfs(int u, int v, List<Integer>[] adj) {
+
+        Queue<Integer> q = new LinkedList<>();
+        boolean[] visited = new boolean[n];
+
+        q.offer(u);
 
         visited[u] = true;
 
-        for(int nei : adj[u]) {
-            if(!visited[nei]) {
-               if(dfs(nei, v, adj, visited)) return true;
+        while(!q.isEmpty()) {
+
+            int size = q.size();
+
+            while(size-- > 0) {
+
+                int curr = q.poll();
+
+                for(int nei : adj[curr]) {
+
+                    if(nei == v) return true;
+
+                    if(!visited[nei]) {
+                        visited[nei] = true;
+                        q.offer(nei);
+                    }
+                }
             }
         }
 
@@ -17,6 +36,7 @@ class Solution {
 
     public List<Boolean> checkIfPrerequisite(int numCourses, int[][] prerequisites, int[][] queries) {
         
+       n = numCourses;
 
        List<Integer>[] adj = new ArrayList[numCourses];
 
@@ -38,9 +58,7 @@ class Solution {
            int u = query[0];
            int v = query[1];
 
-           boolean[] visited = new boolean[numCourses];
-
-           ans.add(dfs(u, v, adj, visited));
+           ans.add(bfs(u, v, adj));
        }
 
        return ans;
