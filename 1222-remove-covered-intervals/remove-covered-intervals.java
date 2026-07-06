@@ -11,15 +11,19 @@ class Solution {
             }
         });
 
+
         List<int[]> result = new ArrayList<>();
-        result.add(intervals[0]);
+        int[] lastSeen = intervals[0];
+        int count = 1;
 
         for(int i = 1; i < n; i++) {
-            int[] last = result.get(result.size()-1);
-            if(last[1] >= intervals[i][1]) continue;
-            else result.add(intervals[i]);
+            if(lastSeen[1] >= intervals[i][1]) continue;
+            else {
+                count++;
+                lastSeen = intervals[i];
+            }
         }
 
-        return result.size();
+        return count;
     }
 }
