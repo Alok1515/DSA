@@ -13,67 +13,51 @@
  *     }
  * }
  */
-class Solution {
+public class Solution {
 
-    private int count = 0;
-
-    private void buildGraph(TreeNode root, TreeNode parent, Map<TreeNode, List<TreeNode>> graph, Set<TreeNode> st ) {
-
-        if(root == null) {
-            return;
+    public List<Integer> solve(TreeNode root, int distance, int[] goodLeafNodes) {
+        if (root == null) {
+            List<Integer> emptyList = new ArrayList<>();
+            emptyList.add(0);
+            return emptyList;
         }
 
-        if(root.left == null && root.right == null) st.add(root);
-
-        graph.putIfAbsent(root, new ArrayList<>());
-
-
-        if(parent != null) {
-            graph.putIfAbsent(parent, new ArrayList<>());
-
-            graph.get(root).add(parent);
-            graph.get(parent).add(root);
+        if (root.left == null && root.right == null) {
+            List<Integer> leafList = new ArrayList<>();
+            leafList.add(1);
+            return leafList;
         }
 
-        buildGraph(root.left, root, graph, st);
-        buildGraph(root.right, root, graph, st);
+        List<Integer> leftDistances = solve(root.left, distance, goodLeafNodes);
+        List<Integer> rightDistances = solve(root.right, distance, goodLeafNodes);
 
-    }
-    public int countPairs(TreeNode root, int distance) {
-        
-        // make graph
-        Map<TreeNode, List<TreeNode>> graph = new HashMap<>();
-        Set<TreeNode> st = new HashSet<>();
-        buildGraph(root, null, graph, st);
-
-        // Bfs from every leaf node
-        for(TreeNode node : st) {
-
-            Queue<TreeNode> q = new LinkedList<>();
-            Set<TreeNode> visited = new HashSet<>();
-            q.offer(node);
-            visited.add(node);
-            
-            for(int level = 0; level <= distance; level++) {
-                int size = q.size();
-
-                while(size-- > 0) {
-
-                    TreeNode curr = q.poll();
-                    if(curr != node && st.contains(curr)) {
-                        count++;
-                    }
-
-                    for(TreeNode ngbr : graph.get(curr)) {
-                        if(!visited.contains(ngbr)) {
-                            q.offer(ngbr);
-                            visited.add(ngbr);
-                        }
-                    }
+        for (int l : leftDistances) {
+            for (int r : rightDistances) {
+                if (l != 0 && r != 0 && l + r <= distance) {
+                    goodLeafNodes[0]++;
                 }
             }
         }
 
-        return count / 2;
+        List<Integer> currentDistances = new ArrayList<>();
+        for (int ld : leftDistances) {
+            if (ld != 0 && ld + 1 <= distance) {
+                currentDistances.add(ld + 1);
+            }
+        }
+
+        for (int rd : rightDistances) {
+            if (rd != 0 && rd + 1 <= distance) {
+                currentDistances.add(rd + 1);
+            }
+        }
+
+        return currentDistances;
+    }
+
+    public int countPairs(TreeNode root, int distance) {
+        int[] goodLeafNodes = new int[1];
+        solve(root, distance, goodLeafNodes);
+        return goodLeafNodes[0];
     }
 }
