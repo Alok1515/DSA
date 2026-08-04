@@ -1,23 +1,27 @@
 class Solution {
+    int n ;
+    Integer[][] dp;
 
-    public boolean predictTheWinner(int[] nums) {
-        int n = nums.length;
-        Integer[][] dp = new Integer[n][n];
+    private int solve(int i, int j, int[] piles) {
 
-        return solve(nums, 0, n - 1, dp) >= 0;
+        // pick the last value
+        if(i == j) return piles[i];
+
+        if(dp[i][j] != null) return dp[i][j];
+
+        int takeLeft = piles[i] - solve(i + 1, j, piles);
+
+        int takeRight = piles[j] - solve(i, j - 1, piles);
+
+        return dp[i][j] = Math.max(takeLeft, takeRight);
     }
+    public boolean predictTheWinner(int[] piles) {
+        n = piles.length;
 
-    private int solve(int[] nums, int left, int right, Integer[][] dp) {
+        dp = new Integer[n][n];
 
-        if (left == right)
-            return nums[left];
+        int result = solve(0, n-1, piles);
 
-        if (dp[left][right] != null)
-            return dp[left][right];
-
-        int pickLeft = nums[left] - solve(nums, left + 1, right, dp);
-        int pickRight = nums[right] - solve(nums, left, right - 1, dp);
-
-        return dp[left][right] = Math.max(pickLeft, pickRight);
+        return result >= 0;
     }
 }
